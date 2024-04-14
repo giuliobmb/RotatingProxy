@@ -12,7 +12,7 @@ public class Proxy {
     Proxy(int port){
         this.port = port;
     }
-    Proxy(){
+    public Proxy(){
         this.port = 8888;
     }
 
@@ -22,6 +22,7 @@ public class Proxy {
         while(true){
             Socket clientSocket = listener.accept();
             Connection conn = new Connection(clientSocket);
+            conn.run();
         }
     }
 
