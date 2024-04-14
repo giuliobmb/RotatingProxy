@@ -21,8 +21,8 @@ public class Proxy {
 
         while(true){
             Socket clientSocket = listener.accept();
-            Connection conn = new Connection(clientSocket);
-            conn.run();
+            Thread conn = new Thread(new Connection(clientSocket));
+            conn.start();
         }
     }
 
