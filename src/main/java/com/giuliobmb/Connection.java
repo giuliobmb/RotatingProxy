@@ -11,13 +11,15 @@ import java.util.Map;
 public class Connection implements Runnable{
 
     Socket client;
-    protected String first_row;
-    protected ArrayList<String> content;
+
+    protected ArrayList<String> raw;
+    protected HashMap<String, String> content;
 
 
     Connection(Socket client){
         this.client = client;
-        content = new ArrayList<String>();
+        content = new HashMap<String, String>();
+        raw = new ArrayList<String>();
     }
     @Override
     public void run() {
@@ -26,13 +28,11 @@ public class Connection implements Runnable{
         int i = 0;
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
-            this.first_row = in.readLine();
-            content.add(in.readLine());
+            raw.add(in.readLine();
             while(content.get(i) != null){
                 //System.out.println(content.get(i));
                 i++;
-                System.out.println(content.add(in.readLine()));
-                content.add(in.readLine());
+                raw.add(in.readLine());
             }
         } catch (IOException e) {
             System.out.println("An error occured while fetching the request content");
@@ -41,9 +41,9 @@ public class Connection implements Runnable{
 
         // MAKING REQUEST TO THE SERVER
 
-        HashMap<String, String> decoded = decode_first(first_row);
+        content = decode(raw);
 
-        log_first(decoded);
+        System.out.println(content.toString());
         /*
         StringBuilder sb;
         try {
@@ -78,27 +78,9 @@ public class Connection implements Runnable{
     }
 
 
-    private HashMap<String, String> decode_first(String first_row){
-        HashMap<String, String> decoded = new HashMap<String, String>();
-        String[] parts = first_row.split(" ");
-
-        try {
-            String[] socket = parts[1].split(":");
-            decoded.put("method", parts[0]);
-            decoded.put("address", socket[0]);
-            decoded.put("port", socket[1]);
-            decoded.put("version", parts[2]);
-        }catch(IndexOutOfBoundsException e){
-            return null;
-        }
-        return decoded;
+    private HashMap<String, String> decode(String first_row){
+        //TODO DECODING METHOD
     }
 
-    private void log_first(HashMap<String, String> decoded){
-        System.out.println(decoded.get("method"));
-        System.out.println(decoded.get("address"));
-        System.out.println(decoded.get("port"));
-        System.out.println(decoded.get("version"));
-    }
 
 }
