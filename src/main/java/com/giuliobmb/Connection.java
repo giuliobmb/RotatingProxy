@@ -78,7 +78,7 @@ public class Connection implements Runnable{
     }
 
 
-    private HashMap<String, String> decode(String first_row){
+    private void decode(String first_row){
         //TODO DECODING METHOD
     }
 
