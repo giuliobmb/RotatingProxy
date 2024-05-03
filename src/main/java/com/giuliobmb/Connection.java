@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,39 +29,41 @@ public class Connection implements Runnable{
         int i = 0;
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(this.client.getInputStream()));
-            raw.add(in.readLine();
-            while(content.get(i) != null){
-                //System.out.println(content.get(i));
-                i++;
-                raw.add(in.readLine());
+
+            for (String line = in.readLine(); line != null; line = in.readLine()) {
+                raw.add(line);
             }
+
         } catch (IOException e) {
             System.out.println("An error occured while fetching the request content");
         }
 
-
         // MAKING REQUEST TO THE SERVER
 
         content = decode(raw);
+        if(content == null)
+            Thread.currentThread().interrupt();
 
-        System.out.println(content.toString());
-        /*
+        //if(content != null)
+            //System.out.println(content.toString());
+
         StringBuilder sb;
         try {
-            Socket proxiedRequest = new Socket(decoded.get("address"), Integer.parseInt(decoded.get("port")));
+            Socket proxiedRequest = new Socket(content.get("host"), Integer.parseInt(content.get("port")));
             PrintWriter out = new PrintWriter(proxiedRequest.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(proxiedRequest.getInputStream()));
-
-            for (int j = 0; j < content.size(); j++) {
-                out.println(content.get(i));
+            System.out.println(raw.toString());
+            for (int j = 0; j < raw.size(); j++) {
+                if(!raw.get(i).contains("Proxy"))
+                    out.println(raw.get(i));
             }
+            out.println("");
             sb = new StringBuilder();
 
             BufferedReader bufRead = new BufferedReader(new InputStreamReader(proxiedRequest.getInputStream()));
-            String outStr;
 
             //Prints each line of the response
-            while((outStr = bufRead.readLine()) != null){
+            for (String outStr = bufRead.readLine(); outStr != null; outStr = bufRead.readLine()) {
                 System.out.println(outStr);
             }
 
@@ -72,14 +75,39 @@ public class Connection implements Runnable{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        */
+
         //RESPONSE TO THE ORIGINAL SERVER
 
     }
 
 
-    private void decode(String first_row){
+    private HashMap<String, String> decode(ArrayList<String> raw){
         //TODO DECODING METHOD
+        String data = null;
+        //System.out.println(raw.toString());
+        try {
+            data = raw.get(1).toString();
+        }catch(IndexOutOfBoundsException e){
+            System.out.println("nulla");
+            return null;
+        }
+
+        String[] splitted = data.split(":");
+
+        String host = splitted[1];
+        String port = null;
+        try{
+            port = splitted[2];
+        }catch(IndexOutOfBoundsException e){
+            port = "80";
+        }
+
+
+        HashMap<String, String> info = new HashMap<String, String>();
+
+        info.put("host", host.trim());
+        info.put("port", port);
+        return info;
     }
 
 
