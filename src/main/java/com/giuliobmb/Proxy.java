@@ -1,8 +1,6 @@
 package com.giuliobmb;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -21,7 +19,7 @@ public class Proxy {
 
         while(true){
             Socket clientSocket = listener.accept();
-            Thread conn = new Thread(new Connection(clientSocket));
+            Thread conn = new Thread(new ConnectionHandler(clientSocket));
             conn.start();
         }
     }
